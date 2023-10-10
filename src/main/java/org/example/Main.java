@@ -1,6 +1,8 @@
 package org.example;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class Main {
@@ -8,8 +10,10 @@ public class Main {
         Action action = new Action();
         Menu menu = new Menu();
 
-        action.create();
-        menu.menuInicial(action);
+        List<Raffle> megaSena = new ArrayList<>();
+
+        megaSena = action.create(megaSena);
+        menu.menuInicial(action,megaSena);
 
     }
 }
