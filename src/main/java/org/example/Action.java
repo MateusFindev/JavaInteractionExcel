@@ -19,9 +19,8 @@ import java.util.logging.Logger;
 
 public class Action {
     private Logger log = Logger.getLogger(String.valueOf(this.getClass()));
-    private List<Raffle> megaSena = new ArrayList<>();
 
-    public List<Raffle> create() throws IOException {
+    public List<Raffle> create(List<Raffle> megaSena) throws IOException {
 
         @Cleanup
         FileInputStream file = new FileInputStream("src/main/resources/Mega-Sena.xlsx");
@@ -66,12 +65,10 @@ public class Action {
     }
 
     public void imprimir(List<Raffle> raffleList) {
-        raffleList.forEach(raffle -> {
-            System.out.println(raffle);
-        });
+        raffleList.forEach(System.out::println);
     }
 
-    public Integer semGanhador() {
+    public Integer semGanhador(List<Raffle> megaSena) {
         Integer noWinnersAmt = 0;
 
         for (Raffle raffle : megaSena) {
@@ -83,24 +80,18 @@ public class Action {
         return noWinnersAmt;
     }
 
-    public BigDecimal menorValor(int ballAmt) {
+    public BigDecimal menorValor(List<Raffle> megaSena, int ballAmt) {
         BigDecimal valor = BigDecimal.ZERO;
         BigDecimal menorValor = BigDecimal.ZERO;
         String stringTemp = "R$0.000,00";
 
         for (Raffle raffle : megaSena) {
             switch (ballAmt) {
-                case 4:
-                    stringTemp = raffle.getDistribution4();
-                    break;
-                case 5:
-                    stringTemp = raffle.getDistribution5();
-                    break;
-                case 6:
-                    stringTemp = raffle.getDistribution6();
-                    break;
-                default:
-                    break;
+                case 4 -> stringTemp = raffle.getDistribution4();
+                case 5 -> stringTemp = raffle.getDistribution5();
+                case 6 -> stringTemp = raffle.getDistribution6();
+                default -> {
+                }
             }
 
             stringTemp = stringTemp.replace("R$", "");
@@ -109,34 +100,28 @@ public class Action {
 
             valor = new BigDecimal(stringTemp);
 
-            if (menorValor == BigDecimal.ZERO || menorValor.compareTo(valor) < 0) {
+            if (menorValor.compareTo(BigDecimal.ZERO)==0) {
                 menorValor = valor;
+            }else if (valor.compareTo(BigDecimal.ZERO)>0) {
+                if (menorValor.compareTo(valor) >= 0) {menorValor = valor;}
             }
         }
-        System.out.println(stringTemp);
-        System.out.println(menorValor);
         return menorValor;
     }
 
-    public BigDecimal maiorValor(int ballAmt) {
-        BigDecimal valor = BigDecimal.ZERO;
-        BigDecimal menorValor = BigDecimal.ZERO;
+    public BigDecimal maiorValor(List<Raffle> megaSena, int ballAmt) {
+        BigDecimal valor;
+        BigDecimal maiorValor = BigDecimal.ZERO;
 
         for (Raffle raffle : megaSena) {
             String stringTemp = "R$0.000,00";
 
             switch (ballAmt) {
-                case 4:
-                    stringTemp = raffle.getDistribution4();
-                    break;
-                case 5:
-                    stringTemp = raffle.getDistribution5();
-                    break;
-                case 6:
-                    stringTemp = raffle.getDistribution6();
-                    break;
-                default:
-                    break;
+                case 4 -> stringTemp = raffle.getDistribution4();
+                case 5 -> stringTemp = raffle.getDistribution5();
+                case 6 -> stringTemp = raffle.getDistribution6();
+                default -> {
+                }
             }
 
             stringTemp = stringTemp.replace("R$", "");
@@ -145,15 +130,16 @@ public class Action {
 
             valor = new BigDecimal(stringTemp);
 
-            if (menorValor == BigDecimal.ZERO || menorValor.compareTo(valor) > 0) {
-                menorValor = valor;
+
+            if (maiorValor.equals(BigDecimal.ZERO) || maiorValor.compareTo(valor) < 0) {
+                maiorValor = valor;
             }
         }
-        System.out.println(menorValor);
-        return menorValor;
+        System.out.println(maiorValor);
+        return maiorValor;
     }
 
-    public int qtdGanhadores(int ballAmt) {
+    public int qtdGanhadores(List<Raffle> megaSena, int ballAmt) {
         int winnersAmt = 0;
 
         for (Raffle raffle : megaSena) {
@@ -173,8 +159,8 @@ public class Action {
         return winnersAmt;
     }
 
-    public String buscarSorteio() {
-        List<Integer> chosedBalls = pedirTesteSorteio();
+    public String buscarSorteio(List<Raffle> megaSena) {
+        List<Integer> chosedBalls = pedirTesteSorteio(megaSena);
         Raffle tempRaffle = null;
 
         for (Raffle raffle : megaSena) {
@@ -198,7 +184,7 @@ public class Action {
         return "Sim";
     }
 
-    public List<Integer> pedirTesteSorteio() {
+    public List<Integer> pedirTesteSorteio(List<Raffle> megaSena) {
         Scanner scan = new Scanner(System.in);
         List<Integer> balls = new ArrayList<Integer>();
         int value = 0;
@@ -221,7 +207,7 @@ public class Action {
         return balls;
     }
 
-    public List<Integer> qtdVezesNumero() {
+    public List<Integer> qtdVezesNumero(List<Raffle> megaSena) {
         List<Integer> options = new ArrayList<>();
 
         for (int i = 0; i <= 59; i++) {
