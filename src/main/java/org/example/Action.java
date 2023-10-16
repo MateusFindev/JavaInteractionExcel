@@ -9,6 +9,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -20,12 +21,22 @@ import java.util.logging.Logger;
 public class Action {
     private Logger log = Logger.getLogger(String.valueOf(this.getClass()));
 
-    public List<Raffle> create(List<Raffle> megaSena) throws IOException {
+    public List<Raffle> create(List<Raffle> megaSena) {
 
-        @Cleanup
-        FileInputStream file = new FileInputStream("src/main/resources/Mega-Sena.xlsx");
 
-        Workbook workbook = new XSSFWorkbook(file);
+        FileInputStream file = null;
+        try {
+            file = new FileInputStream("src/main/resources/Mega-Sena.xlsx");
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
+        Workbook workbook = null;
+        try {
+            workbook = new XSSFWorkbook(file);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         Sheet sheet = workbook.getSheetAt(0);
         List<Row> rowList = (List<Row>) toList(sheet.iterator());
 
@@ -56,7 +67,6 @@ public class Action {
             megaSena.add(raffle);
         });
 
-        imprimir(megaSena);
         return megaSena;
     }
 
