@@ -1,12 +1,22 @@
 package org.example;
 
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class ActionTest {
-    @org.junit.jupiter.api.Test
-    void create() {
+    @Test
+    void create_QuandoReceberListaNula_NaoRetornarListaVazia() {
+        List<Raffle> megaSena = new ArrayList<>();
+        Action action = new Action();
+        Assertions.assertFalse(action.create(megaSena).isEmpty());
     }
 
     @org.junit.jupiter.api.Test
     void toList() {
+
     }
 
     @org.junit.jupiter.api.Test
