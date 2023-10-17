@@ -20,6 +20,7 @@ import java.util.logging.Logger;
 
 public class Action {
     private Logger log = Logger.getLogger(String.valueOf(this.getClass()));
+    Scanner scan = new Scanner(System.in);
 
     public List<Raffle> create(List<Raffle> megaSena) {
 
@@ -72,10 +73,6 @@ public class Action {
 
     public List<?> toList(Iterator<?> iterator) {
         return IteratorUtils.toList(iterator);
-    }
-
-    public void imprimir(List<Raffle> raffleList) {
-        raffleList.forEach(System.out::println);
     }
 
     public Integer semGanhador(List<Raffle> megaSena) {
@@ -138,14 +135,22 @@ public class Action {
             stringTemp = stringTemp.replace(".", "");
             stringTemp = stringTemp.replace(",", ".");
 
-            valor = new BigDecimal(stringTemp);
-
+            if (stringTemp.equals("0.00")) {
+                valor = BigDecimal.ZERO;
+            } else {
+                valor = new BigDecimal(stringTemp);
+            }
 
             if (maiorValor.equals(BigDecimal.ZERO) || maiorValor.compareTo(valor) < 0) {
                 maiorValor = valor;
             }
         }
         System.out.println(maiorValor);
+
+        if (maiorValor.equals(BigDecimal.ZERO) || maiorValor.equals(BigDecimal.valueOf(0.00))) {
+            System.out.println("Nenhum valor foi sorteado nesta condição.");
+            maiorValor=null;
+        }
         return maiorValor;
     }
 
@@ -155,13 +160,19 @@ public class Action {
         for (Raffle raffle : megaSena) {
             switch (ballAmt) {
                 case 4:
-                    winnersAmt += raffle.getWinnersAmt4();
+                    if (raffle.getWinnersAmt4()>=0) {
+                        winnersAmt += raffle.getWinnersAmt4();
+                    }
                     break;
                 case 5:
-                    winnersAmt += raffle.getWinnersAmt5();
+                    if (raffle.getWinnersAmt5()>=0) {
+                        winnersAmt += raffle.getWinnersAmt5();
+                    }
                     break;
                 case 6:
-                    winnersAmt += raffle.getWinnersAmt6();
+                    if (raffle.getWinnersAmt6()>=0) {
+                        winnersAmt += raffle.getWinnersAmt6();
+                    }
                     break;
             }
         }
@@ -169,10 +180,9 @@ public class Action {
         return winnersAmt;
     }
 
-    public String buscarSorteio(List<Raffle> megaSena) {
-        List<Integer> chosedBalls = pedirTesteSorteio(megaSena);
+    public String buscarSorteio(List<Raffle> megaSena, List<Integer> chosedBalls) {
         Raffle tempRaffle = null;
-
+        int contador = 0;
         for (Raffle raffle : megaSena) {
 
             if (raffle.getBalls().get(0) == chosedBalls.get(0)) {
@@ -182,6 +192,7 @@ public class Action {
                             if (raffle.getBalls().get(4) == chosedBalls.get(4)) {
                                 if (raffle.getBalls().get(5) == chosedBalls.get(5)) {
                                     tempRaffle = raffle;
+                                    contador++;
                                 }
                             }
                         }
@@ -191,32 +202,42 @@ public class Action {
         }
 
         System.out.println(tempRaffle);
-        return "Sim";
+        return "Sim, " + contador + " vezes";
     }
 
-    public List<Integer> pedirTesteSorteio(List<Raffle> megaSena) {
-        Scanner scan = new Scanner(System.in);
+    public List<Integer> pedirTesteSorteio() {
+
         List<Integer> balls = new ArrayList<Integer>();
-        int value = 0;
-
         for (int i = 0; i <= 5; i++) {
-            System.out.println("Qual o número escolhido na bola " + (i + 1) + ":");
-            System.out.print("Digite:");
-            value = scan.nextInt();
-
-            if (value > 1 && value < 100) {
-                balls.add(value);
-            } else {
-                do {
-                    System.out.println("Digite um número de 1 a 99.");
-                    System.out.print("Digite:");
-                    value = scan.nextInt();
-                } while (value < 1 && value > 100);
-            }
+            balls.add(verificacao(balls,i));
         }
         return balls;
     }
 
+    public Integer verificacao (List<Integer> balls,int i) {
+        int value = 0;
+
+            System.out.println("Qual o número escolhido na bola " + (i + 1) + ":");
+            System.out.print("Digite:");
+
+            value = scan.nextInt();
+
+            if (value >= 1 && value <= 60) {
+                for (Integer ball : balls) {
+                    if (ball == value) {
+                        System.out.println("Valor já escolhido.");
+                        value = verificacao(balls,i);
+                    }
+                }
+
+            } else {
+                    System.out.println("Digite um número de 1 a 60.");
+                    value = verificacao(balls,i);
+
+
+            }
+        return value;
+    }
     public List<Integer> qtdVezesNumero(List<Raffle> megaSena) {
         List<Integer> options = new ArrayList<>();
 

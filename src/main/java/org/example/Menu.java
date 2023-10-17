@@ -36,7 +36,7 @@ public class Menu {
             case 9 -> System.out.println("A quantidade de ganhadores com 5 dezenas em todos os concursos: " + action.qtdGanhadores(megaSena, 5));
             case 10 -> System.out.println("A quantidade de ganhadores com 6 dezenas em todos os concursos: " + action.qtdGanhadores(megaSena, 6));
             case 11 -> action.qtdVezesNumero(megaSena);
-            case 12 -> action.buscarSorteio(megaSena);
+            case 12 -> action.buscarSorteio(megaSena,action.pedirTesteSorteio());
             default -> System.out.println("Selecione uma alternativa válida\n");
         }
 
